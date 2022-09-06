@@ -389,15 +389,34 @@ local clientkeys = gears.table.join(
     end, { description = "increase client height", group = "client transformations" }),
 
     awful.key({ modkey, "Mod1" }, "h", function(c)
+        local geo = c:geometry()
+        c:relative_move(-geo.x, 0, 0, 0)
+    end, { description = "move client to left screen border", group = "client transformations" }),
+    awful.key({ modkey, "Mod1" }, "l", function(c)
+        local cgeo = c:geometry()
+        local sgeo = c.screen.geometry
+        c:relative_move(sgeo.width - cgeo.x - cgeo.width, 0, 0, 0)
+    end, { description = "move client to right screen border", group = "client transformations" }),
+    awful.key({ modkey, "Mod1" }, "k", function(c)
+        local geo = c:geometry()
+        c:relative_move(0, -geo.y, 0, 0)
+    end, { description = "move client to top border", group = "client transformations" }),
+    awful.key({ modkey, "Mod1" }, "j", function(c)
+        local cgeo = c:geometry()
+        local sgeo = c.screen.geometry
+        c:relative_move(0, sgeo.height - cgeo.y - cgeo.height, 0, 0)
+    end, { description = "move client to bottom border", group = "client transformations" }),
+
+    awful.key({ modkey, "Mod1", "Control" }, "h", function(c)
         c:relative_move(-20, 0, 0, 0)
     end, { description = "move client left", group = "client transformations" }),
-    awful.key({ modkey, "Mod1" }, "l", function(c)
+    awful.key({ modkey, "Mod1", "Control" }, "l", function(c)
         c:relative_move(20, 0, 0, 0)
     end, { description = "move client right", group = "client transformations" }),
-    awful.key({ modkey, "Mod1" }, "k", function(c)
+    awful.key({ modkey, "Mod1", "Control" }, "k", function(c)
         c:relative_move(0, -20, 0, 0)
     end, { description = "move client up", group = "client transformations" }),
-    awful.key({ modkey, "Mod1" }, "j", function(c)
+    awful.key({ modkey, "Mod1", "Control" }, "j", function(c)
         c:relative_move(0, 20, 0, 0)
     end, { description = "move client down", group = "client transformations" })
 )
