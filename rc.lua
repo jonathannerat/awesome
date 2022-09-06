@@ -13,6 +13,8 @@ local naughty = require "naughty"
 -- Theme handling library
 local beautiful = require "beautiful"
 
+local map = require("utils").map
+
 require "awful.autofocus"
 
 -- ## Error checking {{{
@@ -117,13 +119,38 @@ local taglist_buttons = gears.table.join(
     end)
 )
 
+local named_tags = {
+    terminal = " ",
+    browser = " ",
+    documents = " ",
+    school = " ",
+    music = " ",
+    camera = " ",
+    code = " ",
+    chat = " ",
+    games = " "
+}
+
+local tags = map({
+    "terminal",
+    "browser",
+    "documents",
+    "school",
+    "music",
+    "camera",
+    "code",
+    "chat",
+    "games"
+}, function (k) return named_tags[k] end)
+
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
-    awful.tag({ " ", " ", " ", " ", " ", " ", " ", " ", " " }, s, awful.layout.layouts[1])
+    awful.tag(tags, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
     s.mylayoutbox = awful.widget.layoutbox(s)
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen = s,
@@ -458,14 +485,9 @@ awful.rules.rules = {
         properties = { floating = true },
     },
 
-    -- Set Firefox to always map on the tag named "2" on screen 1.
     {
-        rule = { class = "Brave-browser" },
-        properties = { tag = " " },
-    },
-    {
-        rule = { class = "VSCodium" },
-        properties = { screen = 1, tag = " " },
+        rule = { class = "liberwolf" },
+        properties = { tag = named_tags.browser },
     },
     {
         rule = { instance = "floating-alacritty" },
@@ -481,7 +503,7 @@ awful.rules.rules = {
                 "KotatogramDesktop",
             },
         },
-        properties = { screen = 2, tag = "ﮠ " },
+        properties = { tag = named_tags.chat },
     },
 }
 -- }}}
