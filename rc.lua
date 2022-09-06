@@ -119,6 +119,23 @@ local taglist_buttons = gears.table.join(
     end)
 )
 
+local tasklist_buttons = gears.table.join(
+    awful.button({ }, 1, function (c)
+        if c == client.focus then
+            c.minimized = true
+        else
+            c:emit_signal(
+                "request::activate",
+                "tasklist",
+                { raise = true }
+            )
+        end
+    end),
+    awful.button({ }, 3, function()
+        awful.menu.client_list({ theme = { width = 250 } })
+    end)
+)
+
 local named_tags = {
     terminal = " ",
     browser = " ",
@@ -161,7 +178,8 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen = s,
-        filter = awful.widget.tasklist.filter.focused,
+        filter = awful.widget.tasklist.filter.currenttags,
+        buttons = tasklist_buttons,
         widget_template = {
             {
                 {
