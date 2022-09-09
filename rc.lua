@@ -64,37 +64,6 @@ awful.layout.layouts = {
 -- }}}
 
 -- ## Wibar {{{
--- ### Textclock {{{
-local WiTextclock = {
-    uselong = false,
-    shortfmt = "%a %d, %H:%M",
-    longfmt = "%b %d %Y - %a, %H:%M",
-}
-
-function WiTextclock:new(o, uselong)
-    o = o or {}
-    setmetatable(self, o)
-    o.uselong = uselong or false
-    o.format = uselong and o.longfmt or o.shortfmt
-
-    local widget = wibox.widget.textclock(self.shortfmt)
-    widget:connect_signal("button::press", function()
-        self:toggle()
-    end)
-    o.widget = widget
-
-    return o
-end
-
-function WiTextclock:toggle()
-    self.uselong = not self.uselong
-    self.format = self.uselong and self.longfmt or self.shortfmt
-    self.widget:force_update()
-end
-
-local mytextclock = WiTextclock:new()
--- }}}
-
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
     awful.button({}, 1, function(t)
@@ -216,7 +185,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             { -- Status with separator
                 {
-                    mytextclock.widget,
+                    wibox.widget.textclock("%a %d, %H:%M"),
 
                     layout = wibox.layout.fixed.horizontal,
                     spacing = 15,
