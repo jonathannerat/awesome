@@ -127,6 +127,7 @@ local tags = gears.table.map(function (k) return named_tags[k] end, {
     "games"
 })
 
+local systray = wibox.widget.systray()
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     awful.tag(tags, s, awful.layout.layouts[1])
@@ -194,7 +195,7 @@ awful.screen.connect_for_each_screen(function(s)
                 widget = wibox.container.margin,
                 left = 10,
             },
-            wibox.widget.systray(),
+            systray,
             s.mylayoutbox,
 
             layout = wibox.layout.fixed.horizontal,
@@ -530,9 +531,18 @@ client.connect_signal("mouse::enter", function(c)
     c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
+local last_systray_screen = nil
 client.connect_signal("focus", function(c)
     c.border_color = beautiful.border_focus
+
+    -- move systray to focused client's screen (if it hasn't changed)
+    if last_systray_screen ~= c.screen then
+        systray:set_screen(c.screen)
+        systray:emit_signal("widget::redraw_needed")
+        last_systray_screen = c.screen
+    end
 end)
+
 client.connect_signal("unfocus", function(c)
     c.border_color = beautiful.border_normal
 end)
