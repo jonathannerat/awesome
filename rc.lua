@@ -13,8 +13,6 @@ local naughty = require "naughty"
 -- Theme handling library
 local beautiful = require "beautiful"
 
-local map = require("utils").map
-
 require "awful.autofocus"
 
 -- ## Error checking {{{
@@ -117,7 +115,7 @@ local named_tags = {
     games = " "
 }
 
-local tags = map({
+local tags = gears.table.map(function (k) return named_tags[k] end, {
     "terminal",
     "browser",
     "documents",
@@ -127,7 +125,7 @@ local tags = map({
     "code",
     "chat",
     "games"
-}, function (k) return named_tags[k] end)
+})
 
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
