@@ -363,7 +363,8 @@ local clientkeys = gears.table.join(
     awful.key({ modkey, "Mod1" }, "l", function(c)
         local cgeo = c:geometry()
         local sgeo = c.screen.geometry
-        c:relative_move(sgeo.width - cgeo.x - cgeo.width, 0, 0, 0)
+        local delta = sgeo.width - cgeo.x - cgeo.width - 2*c.border_width
+        c:relative_move(delta, 0, 0, 0)
     end, { description = "move client to right screen border", group = "client transformations" }),
     awful.key({ modkey, "Mod1" }, "k", function(c)
         local geo = c:geometry()
@@ -372,7 +373,8 @@ local clientkeys = gears.table.join(
     awful.key({ modkey, "Mod1" }, "j", function(c)
         local cgeo = c:geometry()
         local sgeo = c.screen.geometry
-        c:relative_move(0, sgeo.height - cgeo.y - cgeo.height, 0, 0)
+        local delta = sgeo.height - cgeo.y - cgeo.height - 2*c.border_width
+        c:relative_move(0, delta, 0, 0)
     end, { description = "move client to bottom border", group = "client transformations" }),
 
     awful.key({ modkey, "Mod1", "Control" }, "h", function(c)
