@@ -139,7 +139,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen = s,
-        filter = awful.widget.taglist.filter.noempty,
+        filter = is_noempty,
         buttons = taglist_buttons,
     }
 
@@ -210,9 +210,41 @@ root.buttons(gears.table.join(awful.button({}, 4, awful.tag.viewnext), awful.but
 -- }}}
 
 -- ## Key bindings {{{
+local is_noempty = awful.widget.taglist.filter.noempty
+--- View next / prev non empty tag in the focused screen
+---@param idx number The *relative* index to see (in the list of non-empty tags)
+local function view_noempty_tag(idx)
+    idx = idx or 1
+    local screen = awful.screen.focused()
+    local stag = screen.selected_tag
+    local sidx
+    -- List of tags with at least one client
+    local noempty_tags = {}
+
+    for _, t in ipairs(screen.tags) do
+        if is_noempty(t) then
+            noempty_tags[#noempty_tags+1] = t
+
+            if t == stag then
+                sidx = #noempty_tags
+            end
+        end
+    end
+
+    -- Next tag
+    local nidx = sidx + idx
+    nidx = nidx > #noempty_tags and (nidx - #noempty_tags) or nidx
+
+    -- Focus next tag
+    awful.tag.viewidx(noempty_tags[nidx].index - noempty_tags[sidx].index)
+end
 local globalkeys = gears.table.join(
-    awful.key({ modkey }, "Left", awful.tag.viewprev, { description = "view previous", group = "tag" }),
-    awful.key({ modkey }, "Right", awful.tag.viewnext, { description = "view next", group = "tag" }),
+    awful.key({ modkey }, "Left", function ()
+        view_noempty_tag(-1)
+    end, { description = "view previous noempty", group = "tag" }),
+    awful.key({ modkey }, "Right", function ()
+        view_noempty_tag(1)
+    end, { description = "view next noempty", group = "tag" }),
     awful.key({ modkey }, "Tab", awful.tag.history.restore, { description = "go back", group = "tag" }),
 
     awful.key({ modkey }, "j", function()
@@ -478,6 +510,7 @@ awful.rules.rules = {
                 "Sxiv",
                 "Pavucontrol",
                 "ssh-askpass",
+                "Connman-gtk"
             },
 
             -- Note that the name property shown in xprop might be set slightly after creation of the client
