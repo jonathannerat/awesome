@@ -232,8 +232,7 @@ local function view_noempty_tag(idx)
     end
 
     -- Next tag
-    local nidx = sidx + idx
-    nidx = nidx > #noempty_tags and (nidx - #noempty_tags) or nidx
+    local nidx = (sidx + idx - 1) % #noempty_tags + 1
 
     -- Focus next tag
     awful.tag.viewidx(noempty_tags[nidx].index - noempty_tags[sidx].index)
