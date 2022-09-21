@@ -417,6 +417,14 @@ local clientkeys = gears.table.join(
         c:relative_move(0, delta, 0, 0)
     end, { description = "move client to bottom border", group = "client transformations" }),
 
+    awful.key({ modkey }, "c", function(c)
+        local cgeo = c:geometry()
+        local sgeo = c.screen.geometry
+        local xdelta = (sgeo.width - cgeo.width - 2*c.border_width) / 2 - cgeo.x
+        local ydelta = (sgeo.height - cgeo.height - 2*c.border_width) / 2 - cgeo.y
+        c:relative_move(xdelta, ydelta, 0, 0)
+    end, { description = "move client to center", group = "client transformations" }),
+
     awful.key({ modkey, "Mod1", "Control" }, "h", function(c)
         c:relative_move(-20, 0, 0, 0)
     end, { description = "move client left", group = "client transformations" }),
