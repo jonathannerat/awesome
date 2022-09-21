@@ -210,7 +210,16 @@ root.buttons(gears.table.join(awful.button({}, 4, awful.tag.viewnext), awful.but
 -- }}}
 
 -- ## Key bindings {{{
-local is_noempty = awful.widget.taglist.filter.noempty
+local function has_non_minimized_clients(t)
+    for _, c in ipairs(t:clients()) do
+        if not c.minimized then
+            return true
+        end
+    end
+
+    return false
+end
+
 --- View next / prev non empty tag in the focused screen
 ---@param idx number The *relative* index to see (in the list of non-empty tags)
 local function view_noempty_tag(idx)
@@ -222,7 +231,7 @@ local function view_noempty_tag(idx)
     local noempty_tags = {}
 
     for _, t in ipairs(screen.tags) do
-        if is_noempty(t) then
+        if t.selected or has_non_minimized_clients(t) then
             noempty_tags[#noempty_tags+1] = t
 
             if t == stag then
