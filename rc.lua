@@ -13,6 +13,8 @@ local naughty = require "naughty"
 -- Theme handling library
 local beautiful = require "beautiful"
 
+local lain = require('lain')
+
 require "awful.autofocus"
 
 -- ## Error checking {{{
@@ -214,48 +216,13 @@ end)
 -- }}}
 
 -- ## Key bindings {{{
-local function has_non_minimized_clients(t)
-    for _, c in ipairs(t:clients()) do
-        if not c.minimized then
-            return true
-        end
-    end
 
-    return false
-end
-
---- View next / prev non empty tag in the focused screen
----@param idx number The *relative* index to see (in the list of non-empty tags)
-local function view_noempty_tag(idx)
-    idx = idx or 1
-    local screen = awful.screen.focused()
-    local stag = screen.selected_tag
-    local sidx
-    -- List of tags with at least one client
-    local noempty_tags = {}
-
-    for _, t in ipairs(screen.tags) do
-        if t.selected or has_non_minimized_clients(t) then
-            noempty_tags[#noempty_tags+1] = t
-
-            if t == stag then
-                sidx = #noempty_tags
-            end
-        end
-    end
-
-    -- Next tag
-    local nidx = (sidx + idx - 1) % #noempty_tags + 1
-
-    -- Focus next tag
-    awful.tag.viewidx(noempty_tags[nidx].index - noempty_tags[sidx].index)
-end
 local globalkeys = gears.table.join(
     awful.key({ modkey }, "Left", function ()
-        view_noempty_tag(-1)
+        lain.util.tag_view_nonempty(-1)
     end, { description = "view previous noempty", group = "tag" }),
     awful.key({ modkey }, "Right", function ()
-        view_noempty_tag(1)
+        lain.util.tag_view_nonempty(1)
     end, { description = "view next noempty", group = "tag" }),
     awful.key({ modkey }, "Tab", awful.tag.history.restore, { description = "go back", group = "tag" }),
 
