@@ -15,6 +15,8 @@ local beautiful = require "beautiful"
 
 local lain = require('lain')
 
+awful.spawn("systemctl --user start autostart.target")
+
 require "awful.autofocus"
 
 -- ## Error checking {{{
