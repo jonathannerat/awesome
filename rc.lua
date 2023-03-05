@@ -53,7 +53,7 @@ end
 
 -- ## Variable definitions {{{
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_configuration_dir() .. "/themes/default.lua")
+beautiful.init(gears.filesystem.get_configuration_dir() .. "/user/themes/default.lua")
 
 local modkey = "Mod4"
 
@@ -139,7 +139,7 @@ local tags = gears.table.map(function (k) return named_tags[k] end, {
     "games"
 })
 
-local cycleclock = require "widget.cycleclock"
+local cycleclock = require "user.widget.cycleclock"
 
 local systray = wibox.widget.systray()
 awful.screen.connect_for_each_screen(function(s)
