@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font = "TerminessTTF Nerd Font 10"
+theme.font = "FantasqueSansMono Nerd Font 10"
 
 theme.color_red = "#f7768e"
 theme.color_orange = "#ff9e64"
@@ -32,9 +32,8 @@ theme.color_dark3 = "#24283b"
 theme.color_dark4 = "#1a1b26"
 
 theme.notification_icon_size = dpi(48)
-theme.notification_width = dpi(350)
+theme.notification_width = dpi(250)
 theme.notification_max_width = dpi(350)
-theme.notification_max_height = dpi(100)
 theme.notification_font = "Roboto, Regular 10"
 theme.bg_solid = theme.color_dark4
 theme.bg_normal = theme.color_dark4
@@ -44,10 +43,10 @@ theme.fg_normal = theme.color_fg
 theme.fg_focus = theme.color_blue
 theme.fg_urgent = theme.color_yellow
 theme.fg_minimize = theme.color_fg
-theme.border_width = dpi(1)
-theme.border_normal = theme.color_dark3 .. "30"
-theme.border_focus = theme.color_blue .. "30"
-theme.border_marked = theme.color_yellow .. "30"
+theme.border_width = dpi(2)
+theme.border_normal = theme.color_dark3 .. "f0"
+theme.border_focus = theme.color_purple .. "f0"
+theme.border_marked = theme.color_yellow .. "f0"
 theme.taglist_fg_focus = theme.color_dark4
 theme.taglist_fg_empty = theme.color_dark2
 theme.taglist_bg_focus = theme.color_blue
@@ -86,7 +85,12 @@ local gt = require("gears.table")
 local naughty = require("naughty")
 
 gt.crush(naughty.config, {
-    icon_dirs = { "/usr/share/icons/Papirus-Dark/symbolic" },
+    icon_dirs = {
+        "/usr/share/pixmaps/",
+        "/usr/share/hicolor/",
+        "/usr/share/icons/Papirus-Dark/",
+    },
+    icon_formats = { "png", "svg", }
 })
 
 gt.crush(naughty.config.presets, {
