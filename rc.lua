@@ -59,35 +59,43 @@ awful.layout.layouts = {
     awful.layout.suit.fair,
     awful.layout.suit.max,
 }
+
+local MouseButton = {
+    LEFT = 1,
+    MIDDLE = 2,
+    RIGHT = 3,
+    SCROLL_UP = 4,
+    SCROLL_DOWN = 5,
+}
 -- }}}
 
 -- ## Wibar {{{
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
-    awful.button({}, 1, function(t)
+    awful.button({}, MouseButton.LEFT, function(t)
         t:view_only()
     end),
-    awful.button({ modkey }, 1, function(t)
+    awful.button({ modkey }, MouseButton.LEFT, function(t)
         if client.focus then
             client.focus:move_to_tag(t)
         end
     end),
-    awful.button({}, 3, awful.tag.viewtoggle),
-    awful.button({ modkey }, 3, function(t)
+    awful.button({}, MouseButton.RIGHT, awful.tag.viewtoggle),
+    awful.button({ modkey }, MouseButton.RIGHT, function(t)
         if client.focus then
             client.focus:toggle_tag(t)
         end
     end),
-    awful.button({}, 4, function(t)
+    awful.button({}, MouseButton.SCROLL_UP, function(t)
         awful.tag.viewnext(t.screen)
     end),
-    awful.button({}, 5, function(t)
+    awful.button({}, MouseButton.SCROLL_DOWN, function(t)
         awful.tag.viewprev(t.screen)
     end)
 )
 
 local tasklist_buttons = gears.table.join(
-    awful.button({ }, 1, function (c)
+    awful.button({ }, MouseButton.LEFT, function (c)
         if c == client.focus then
             c.minimized = true
         else
@@ -98,7 +106,7 @@ local tasklist_buttons = gears.table.join(
             )
         end
     end),
-    awful.button({ }, 3, function()
+    awful.button({ }, MouseButton.RIGHT, function()
         awful.menu.client_list({ theme = { width = 250 } })
     end)
 )
@@ -203,10 +211,6 @@ awful.screen.connect_for_each_screen(function(s)
         },
     }
 end)
--- }}}
-
--- ## Mouse bindings {{{
-root.buttons(gears.table.join(awful.button({}, 4, awful.tag.viewnext), awful.button({}, 5, awful.tag.viewprev)))
 -- }}}
 
 -- ## Key bindings {{{
@@ -483,14 +487,14 @@ for i = 1, 9 do
 end
 
 local clientbuttons = gears.table.join(
-    awful.button({}, 1, function(c)
+    awful.button({}, MouseButton.LEFT, function(c)
         c:emit_signal("request::activate", "mouse_click", { raise = true })
     end),
-    awful.button({ modkey }, 1, function(c)
+    awful.button({ modkey }, MouseButton.LEFT, function(c)
         c:emit_signal("request::activate", "mouse_click", { raise = true })
         awful.mouse.client.move(c)
     end),
-    awful.button({ modkey }, 3, function(c)
+    awful.button({ modkey }, MouseButton.RIGHT, function(c)
         c:emit_signal("request::activate", "mouse_click", { raise = true })
         awful.mouse.client.resize(c)
     end)
