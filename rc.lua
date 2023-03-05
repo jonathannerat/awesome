@@ -515,7 +515,9 @@ awful.rules.rules = {
                 "Sxiv",
                 "Pavucontrol",
                 "ssh-askpass",
-                "Connman-gtk"
+                "Connman-gtk",
+                "Blueman-manager",
+                "Qalculate-gtk",
             },
 
             -- Note that the name property shown in xprop might be set slightly after creation of the client
@@ -546,6 +548,7 @@ awful.rules.rules = {
             class = {
                 "discord",
                 "KotatogramDesktop",
+                "Mailspring",
             },
         },
         properties = { tag = named_tags.chat },
