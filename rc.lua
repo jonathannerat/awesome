@@ -195,7 +195,6 @@ awful.screen.connect_for_each_screen(function(s)
             { -- Status with separator
                 {
                     wibox.widget.textclock("%a %d, %H:%M"),
-
                     layout = wibox.layout.fixed.horizontal,
                     spacing = 15,
                     spacing_widget = {
@@ -216,6 +215,17 @@ end)
 -- }}}
 
 -- ## Key bindings {{{
+local quaketerm = lain.util.quake {
+    app = "alacritty",
+    name = "QuakeAlacritty",
+    argname = "-t QuakeAlacritty",
+    extra = "--class QuakeAlacritty -e tmux new -A -s quake",
+    followtag = true,
+    height = 0.6,
+    width = 0.6,
+    vert = "center",
+    horiz = "center",
+}
 
 local globalkeys = gears.table.join(
     awful.key({ modkey }, "Left", function ()
@@ -291,6 +301,10 @@ local globalkeys = gears.table.join(
             c:emit_signal("request::activate", "key.unminimize", { raise = true })
         end
     end, { description = "restore minimized", group = "client" }),
+
+    awful.key({ modkey, "Control" }, "Return", function()
+        quaketerm:toggle()
+    end, { description = "toggle", group = "awesome" }),
 
     -- Prompt
     awful.key({ modkey }, "p", function()
