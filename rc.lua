@@ -137,6 +137,8 @@ local tags = gears.table.map(function (k) return named_tags[k] end, {
     "games"
 })
 
+local cycleclock = require "widget.cycleclock"
+
 local systray = wibox.widget.systray()
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
@@ -194,7 +196,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             { -- Status with separator
                 {
-                    wibox.widget.textclock("%a %d, %H:%M"),
+                    cycleclock { " %a %d -  %H:%M", " %B %d, %A -  %H:%M" },
                     layout = wibox.layout.fixed.horizontal,
                     spacing = 15,
                     spacing_widget = {
