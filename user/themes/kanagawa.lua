@@ -32,8 +32,8 @@ theme.color_dark3 = "#1F1F28"
 theme.color_dark4 = "#16161D"
 
 theme.notification_icon_size = dpi(48)
-theme.notification_width = dpi(250)
-theme.notification_max_width = dpi(350)
+theme.notification_width = dpi(300)
+theme.notification_max_width = dpi(400)
 theme.notification_font = "Roboto, Regular 10"
 theme.bg_solid = theme.color_dark4
 theme.bg_normal = theme.color_dark4

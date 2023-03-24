@@ -13,11 +13,14 @@ local naughty = require "naughty"
 -- Theme handling library
 local beautiful = require "beautiful"
 
-local lain = require('lain')
+local lain = require "lain"
+local dpi = require("beautiful.xresources").apply_dpi
 
-awful.spawn("systemctl --user start autostart.target")
+awful.spawn "systemctl --user start autostart.target"
+awful.spawn "albert"
 
 require "awful.autofocus"
+require "awful.remote"
 
 -- ## Error checking {{{
 
@@ -64,14 +67,8 @@ awful.layout.layouts = {
     awful.layout.suit.max,
 }
 
-local MouseButton = {
-    LEFT = 1,
-    MIDDLE = 2,
-    RIGHT = 3,
-    SCROLL_UP = 4,
-    SCROLL_DOWN = 5,
-}
--- }}}
+local enums = require "user.enums"
+local MouseButton = enums.MouseButton
 
 -- ## Wibar {{{
 -- Create a wibox for each screen and add it
@@ -115,28 +112,20 @@ local tasklist_buttons = gears.table.join(
     end)
 )
 
-local named_tags = {
-    terminal = " ",
-    browser = " ",
-    documents = " ",
-    school = " ",
-    music = " ",
-    camera = " ",
-    code = " ",
-    chat = " ",
-    games = " "
-}
+local Tag = enums.Tag
 
-local tags = gears.table.map(function (k) return named_tags[k] end, {
-    "terminal",
-    "browser",
-    "documents",
-    "school",
-    "music",
-    "camera",
-    "code",
-    "chat",
-    "games"
+local ordered_tags = gears.table.map(function(k)
+   return Tag[k]
+end, {
+   "TERMINAL",
+   "BROWSER",
+   "DOCUMENTS",
+   "SCHOOL",
+   "MUSIC",
+   "CAMERA",
+   "CODE",
+   "CHAT",
+   "GAMES",
 })
 
 local cycleclock = require "user.widget.cycleclock"
@@ -144,7 +133,7 @@ local cycleclock = require "user.widget.cycleclock"
 local systray = wibox.widget.systray()
 awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
-    awful.tag(tags, s, awful.layout.layouts[1])
+    awful.tag(ordered_tags, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -198,7 +187,31 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             { -- Status with separator
                 {
-                    cycleclock { " %a %d -  %H:%M", " %B %d, %A -  %H:%M" },
+                    lain.widget.fs {
+                        settings = function()
+                            widget:set_text(
+                               (" /: %d%%   /home: %d%%"):format(fs_now["/"].percentage, fs_now["/home"].percentage)
+                            )
+                        end,
+                    },
+                    lain.widget.weather {
+                        APPID = "05ce015e771c1ff5fd1dead73bc780c0",
+                        lat = -34.6526296,
+                        lon = -58.4147098,
+                        notification_text_fun = function(wn)
+                            local day = os.date("%a %d (%I%p)", wn["dt"])
+                            local temp = math.floor(wn["main"]["temp"])
+                            local desc = wn["weather"][1]["description"]
+                            return string.format("<b>%s</b>: %s, %d ", day, desc, temp)
+                        end,
+                        settings = function()
+                            local description = weather_now["weather"][1]["description"]:lower()
+                            local temp = weather_now["main"]["temp"]
+                            local feels_like = weather_now["main"]["feels_like"]
+                            widget:set_text(("%s %.1f°C (%.1f°C)"):format(description, temp, feels_like))
+                        end,
+                    },
+                    cycleclock { " %a %d   %H:%M", " %B %d, %A   %H:%M" },
                     layout = wibox.layout.fixed.horizontal,
                     spacing = 15,
                     spacing_widget = {
@@ -529,18 +542,37 @@ awful.rules.rules = {
                 "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
             },
         },
-        properties = { floating = true },
+        properties = { floating = true, border_width = dpi(1), placement = awful.placement.centered },
     },
 
     {
+        rule = {
+            class = "albert",
+            instance = "albert",
+            name = "Albert",
+        },
+        except = { name = "Settings" },
+        properties = {
+            border_width = 0,
+            skip_taskbar = true,
+        },
+    },
+    {
         rule = { class = "liberwolf" },
-        properties = { tag = named_tags.browser },
+        properties = { tag = Tag.BROWSER },
     },
     {
         rule = { instance = "floating-alacritty" },
         properties = {
             floating = true,
             placement = awful.placement.centered,
+        },
+    },
+    {
+        rule = { name = "zoom" },
+        properties = {
+            floating = true,
+            placement = awful.placement.top + awful.placement.right,
         },
     },
     {
@@ -551,7 +583,7 @@ awful.rules.rules = {
                 "Mailspring",
             },
         },
-        properties = { tag = named_tags.chat },
+        properties = { tag = Tag.CHAT },
     },
 }
 -- }}}
