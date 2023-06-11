@@ -38,6 +38,18 @@ local quaketerm = lain.quake {
    horiz = "center",
 }
 
+local quakennn = lain.quake {
+   app = "alacritty",
+   name = "QuakeNNN",
+   argname = "-t QuakeNNN",
+   extra = "--class QuakeNNN -o font.size=10.5 -e n",
+   followtag = true,
+   height = 0.6,
+   width = 0.6,
+   vert = "center",
+   horiz = "center",
+}
+
 local global_keys = join(
    map(MODKEY, "Left", function()
       lain.tag_view_nonempty(-1)
@@ -115,6 +127,10 @@ local global_keys = join(
 
    map({ MODKEY, "Control" }, "Return", function()
       quaketerm:toggle()
+   end),
+
+   map({ MODKEY, "Control" }, "e", function()
+      quakennn:toggle()
    end),
 
    -- Prompt
