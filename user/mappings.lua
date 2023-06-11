@@ -195,7 +195,7 @@ local client_keys = join(
    map(MODKEY, "q", function(c)
       c:kill()
    end),
-   map({ MODKEY, "Shift" }, "f", awful_client.floating.toggle, { description = "toggle floating", group = "client" }),
+   map({ MODKEY, "Shift" }, "f", awful_client.floating.toggle),
    map(MODKEY, "Return", function(c)
       c:swap(awful_client.getmaster())
    end),

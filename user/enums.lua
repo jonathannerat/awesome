@@ -1,4 +1,3 @@
----@enum MouseButton
 local MouseButton = {
    LEFT = 1,
    MIDDLE = 2,
@@ -7,7 +6,6 @@ local MouseButton = {
    SCROLL_DOWN = 5,
 }
 
---- @enum Tag
 local Tag = {
    TERMINAL = " ",
    BROWSER = " ",
