@@ -85,7 +85,7 @@ return {
       },
    },
    {
-      rule = { class = "liberwolf" },
+      rule = { class = "Liberwolf" },
       properties = { tag = Tag.BROWSER },
    },
    {
@@ -108,6 +108,7 @@ return {
             "discord",
             "KotatogramDesktop",
             "Mailspring",
+            "thunderbird",
          },
       },
       properties = { tag = Tag.CHAT },
