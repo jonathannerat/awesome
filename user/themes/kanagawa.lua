@@ -3,15 +3,15 @@
 ---------------------------
 
 local theme_assets = require "beautiful.theme_assets"
-local xresources = require "beautiful.xresources"
-local dpi = xresources.apply_dpi
-
-local gfs = require("gears.filesystem")
-local themes_path = gfs.get_themes_dir()
+local gtcrush = require("gears.table").crush
+local naughty = require "naughty"
+local themes_path = require("gears.filesystem").get_themes_dir()
+local custom = require("user.utils").custom
+local dpi = require("beautiful.xresources").apply_dpi
 
 local theme = {}
 
-theme.font = "Caskaydia Cove Nerd Font 9"
+theme.font = custom "font"
 
 theme.color_red = "#FF5D62"
 theme.color_orange = "#FFA066"
@@ -31,10 +31,10 @@ theme.color_dark2 = "#2A2A37"
 theme.color_dark3 = "#1F1F28"
 theme.color_dark4 = "#16161D"
 
-theme.notification_icon_size = dpi(48)
-theme.notification_width = dpi(300)
-theme.notification_max_width = dpi(400)
-theme.notification_font = "Roboto, Regular 10"
+theme.notification_icon_size = dpi(custom "notification_icon_size")
+theme.notification_width = dpi(custom "notification_width")
+theme.notification_max_width = dpi(custom "notification_max_width")
+theme.notification_font = custom "notification_font"
 theme.bg_solid = theme.color_dark4
 theme.bg_normal = theme.color_dark4
 theme.bg_focus = theme.color_dark3
@@ -58,22 +58,22 @@ theme.taglist_squares_sel = theme_assets.taglist_squares_sel(taglist_square_size
 theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
 
 -- You can use your own layout icons like this:
-theme.layout_fairh = themes_path.."default/layouts/fairhw.png"
-theme.layout_fairv = themes_path.."default/layouts/fairvw.png"
-theme.layout_floating  = themes_path.."default/layouts/floatingw.png"
-theme.layout_magnifier = themes_path.."default/layouts/magnifierw.png"
-theme.layout_max = themes_path.."default/layouts/maxw.png"
-theme.layout_fullscreen = themes_path.."default/layouts/fullscreenw.png"
-theme.layout_tilebottom = themes_path.."default/layouts/tilebottomw.png"
-theme.layout_tileleft   = themes_path.."default/layouts/tileleftw.png"
-theme.layout_tile = themes_path.."default/layouts/tilew.png"
-theme.layout_tiletop = themes_path.."default/layouts/tiletopw.png"
-theme.layout_spiral  = themes_path.."default/layouts/spiralw.png"
-theme.layout_dwindle = themes_path.."default/layouts/dwindlew.png"
-theme.layout_cornernw = themes_path.."default/layouts/cornernww.png"
-theme.layout_cornerne = themes_path.."default/layouts/cornernew.png"
-theme.layout_cornersw = themes_path.."default/layouts/cornersww.png"
-theme.layout_cornerse = themes_path.."default/layouts/cornersew.png"
+theme.layout_fairh = themes_path .. "default/layouts/fairhw.png"
+theme.layout_fairv = themes_path .. "default/layouts/fairvw.png"
+theme.layout_floating = themes_path .. "default/layouts/floatingw.png"
+theme.layout_magnifier = themes_path .. "default/layouts/magnifierw.png"
+theme.layout_max = themes_path .. "default/layouts/maxw.png"
+theme.layout_fullscreen = themes_path .. "default/layouts/fullscreenw.png"
+theme.layout_tilebottom = themes_path .. "default/layouts/tilebottomw.png"
+theme.layout_tileleft = themes_path .. "default/layouts/tileleftw.png"
+theme.layout_tile = themes_path .. "default/layouts/tilew.png"
+theme.layout_tiletop = themes_path .. "default/layouts/tiletopw.png"
+theme.layout_spiral = themes_path .. "default/layouts/spiralw.png"
+theme.layout_dwindle = themes_path .. "default/layouts/dwindlew.png"
+theme.layout_cornernw = themes_path .. "default/layouts/cornernww.png"
+theme.layout_cornerne = themes_path .. "default/layouts/cornernew.png"
+theme.layout_cornersw = themes_path .. "default/layouts/cornersww.png"
+theme.layout_cornerse = themes_path .. "default/layouts/cornersew.png"
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
@@ -81,39 +81,32 @@ theme.icon_theme = "Papirus-Dark"
 
 theme.separator_thickness = 0.5
 
-local gt = require("gears.table")
-local naughty = require("naughty")
-
-gt.crush(naughty.config, {
-    icon_dirs = {
-        "/usr/share/pixmaps/",
-        "/usr/share/hicolor/",
-        "/usr/share/icons/Papirus-Dark/",
-    },
-    icon_formats = { "png", "svg", }
+gtcrush(naughty.config, {
+   icon_dirs = custom "icon_dirs",
+   icon_formats = { "png", "svg" },
 })
 
-gt.crush(naughty.config.presets, {
-    low = {
-        fg = theme.color_fg_dark,
-        bg = theme.bg_normal,
-        border_color = theme.color_dark1,
-        timeout = 15,
-    },
-    normal = {
-        fg = theme.color_fg,
-        bg = theme.bg_normal,
-        border_color = theme.color_blue,
-        timeout = 30,
-    },
-    critical = {
-        fg = theme.color_dark2,
-        bg = theme.color_red,
-        border_color = theme.color_dark4,
-    }
+gtcrush(naughty.config.presets, {
+   low = {
+      fg = theme.color_fg_dark,
+      bg = theme.bg_normal,
+      border_color = theme.color_dark1,
+      timeout = 15,
+   },
+   normal = {
+      fg = theme.color_fg,
+      bg = theme.bg_normal,
+      border_color = theme.color_blue,
+      timeout = 30,
+   },
+   critical = {
+      fg = theme.color_dark2,
+      bg = theme.color_red,
+      border_color = theme.color_dark4,
+   },
 })
 
-local dbus = require("naughty.dbus")
+local dbus = require "naughty.dbus"
 
 dbus.config.mapping[1][2] = naughty.config.presets.low
 dbus.config.mapping[2][2] = naughty.config.presets.normal
