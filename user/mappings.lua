@@ -50,6 +50,18 @@ local quakennn = lain.quake {
    horiz = "center",
 }
 
+local quakespot = lain.quake {
+   app = "alacritty",
+   name = "QuakeSpotify",
+   argname = "-t QuakeSpotify",
+   extra = "--class QuakeSpotify -o font.size=10.5 -e ncspot",
+   followtag = true,
+   height = 0.8,
+   width = 0.6,
+   vert = "center",
+   horiz = "center",
+}
+
 local global_keys = join(
    map(MODKEY, "Left", function()
       lain.tag_view_nonempty(-1)
@@ -133,6 +145,10 @@ local global_keys = join(
       quakennn:toggle()
    end),
 
+   map({ MODKEY, "Control" }, "m", function()
+      quakespot:toggle()
+   end),
+
    -- Prompt
    map(MODKEY, "p", function()
       screen.focused().my_widgets.prompt:run()
@@ -212,14 +228,6 @@ local client_keys = join(
    end),
    map(MODKEY, "m", function(c)
       c.maximized = not c.maximized
-      c:raise()
-   end),
-   map({ MODKEY, "Control" }, "m", function(c)
-      c.maximized_vertical = not c.maximized_vertical
-      c:raise()
-   end),
-   map({ MODKEY, "Shift" }, "m", function(c)
-      c.maximized_horizontal = not c.maximized_horizontal
       c:raise()
    end),
 
