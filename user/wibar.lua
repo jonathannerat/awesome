@@ -29,25 +29,38 @@ return function(screen)
       screen = screen,
       filter = widget.tasklist.filter.currenttags,
       buttons = buttons.tasklist,
+      layout = {
+         layout = wibox_layout.fixed.horizontal,
+      },
       widget_template = {
          {
+            wibox.widget.base.make_widget(),
+            forced_height = 2,
+            id = "background_role",
+            widget = wibox.container.background,
+         },
+         {
             {
-               {
-                  id = "text_role",
-                  widget = wibox.widget.textbox,
-               },
-               layout = wibox_layout.fixed.horizontal,
+               id = "clienticon",
+               widget = widget.clienticon,
             },
-            left = 10,
-            right = 10,
+            top = 2,
+            left = 2,
             widget = wibox.container.margin,
          },
-         id = "background_role",
-         widget = wibox.container.background,
+         nil,
+         create_callback = function(self, c)
+            self:get_children_by_id("clienticon")[1].client = c
+         end,
+         layout = wibox_layout.align.vertical
       },
    }
 
-   local topbar = wibar.new { position = "top", screen = screen }
+   local topbar = wibar.new {
+      screen = screen,
+      position = "top",
+      height = 24,
+   }
 
    local my_widgets = {
       prompt = widget.prompt(),
@@ -70,15 +83,20 @@ return function(screen)
       },
 
       -- Middle
-      tasklist,
+      {
+         tasklist,
+
+         left = 5,
+         widget = wibox.container.margin,
+      },
 
       { -- Right widgets
-         layout = wibox_layout.fixed.horizontal,
-         spacing = 10,
-
          require "user.wibar.status",
          systray,
          widget.layoutbox(screen),
+
+         layout = wibox_layout.fixed.horizontal,
+         spacing = 10,
       },
    }
 end
