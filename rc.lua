@@ -14,8 +14,14 @@ local naughty = require "naughty"
 -- Theme handling library
 local beautiful = require "beautiful"
 
-spawn "systemctl --user start autostart.target"
-spawn "albert"
+spawn "dbus-update-activation-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY"
+
+spawn.with_shell [[
+   if [ "$(xrdb -get awesome.started)" != "true" ]; then
+      echo "awesome.started:true" | xrdb -merge;
+      dex --environment Awesome --autostart;
+   fi
+]]
 
 require "awful.autofocus"
 require "awful.remote"
