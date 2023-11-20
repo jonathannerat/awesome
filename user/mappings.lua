@@ -42,7 +42,7 @@ local quakennn = lain.quake {
    app = "alacritty",
    name = "QuakeNNN",
    argname = "-t QuakeNNN",
-   extra = "--class QuakeNNN -o font.size=10.5 -e n",
+   extra = "--class QuakeNNN -o font.size=10 -e n",
    followtag = true,
    height = 0.6,
    width = 0.6,
@@ -50,11 +50,11 @@ local quakennn = lain.quake {
    horiz = "center",
 }
 
-local quakespot = lain.quake {
+local quakemutt = lain.quake {
    app = "alacritty",
-   name = "QuakeSpotify",
-   argname = "-t QuakeSpotify",
-   extra = "--class QuakeSpotify -o font.size=10.5 -e ncspot",
+   name = "QuakeNeomutt",
+   argname = "-t QuakeNeomutt",
+   extra = "--class QuakeNeomutt -o font.size=8 -e neomutt",
    followtag = true,
    height = 0.8,
    width = 0.6,
@@ -146,7 +146,7 @@ local global_keys = join(
    end),
 
    map({ MODKEY, "Control" }, "m", function()
-      quakespot:toggle()
+      quakemutt:toggle()
    end),
 
    -- Prompt
