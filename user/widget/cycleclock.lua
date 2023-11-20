@@ -32,10 +32,10 @@ local function new(formats, refresh, tzid)
          w:set_format(w:cycle_next_format())
       end),
       awful.button({}, 2, function()
-         month_calendar:toggle()
+         year_calendar:toggle()
       end),
       awful.button({}, 3, function()
-         year_calendar:toggle()
+         month_calendar:toggle()
       end)
    ))
 
