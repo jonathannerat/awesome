@@ -5,8 +5,9 @@ local join = require("gears.table").join
 local tags = require "awful.tag"
 local button = require "awful.button"
 local menu = require "awful.menu"
+
 local MouseButton = require("user.enums").MouseButton
-local MODKEY = require("user.constants").MODKEY
+local MODKEY = require("user.utils").custom("modkey")
 
 local function bmap(mod, key, fn)
    if not fn then

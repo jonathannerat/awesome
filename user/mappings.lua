@@ -10,7 +10,7 @@ local screen = require "awful.screen"
 local join = require("gears.table").join
 local tags = require "awful.tag"
 
-local MODKEY = require("user.constants").MODKEY
+local MODKEY = require("user.utils").custom("modkey")
 
 local function map(mod, key, fn)
    if not fn then

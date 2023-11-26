@@ -6,14 +6,14 @@ local placement = require "awful.placement"
 local screen = require "awful.screen"
 
 local dpi = require("beautiful.xresources").apply_dpi
-local join = require "gears.table".join
+local join = require("gears.table").join
 local button = require "awful.button"
 
-local enums = require("user.enums")
-local Tag = enums.Tag
+local enums = require "user.enums"
+local TagIcons = enums.TagIcons
 local MouseButton = enums.MouseButton
 
-local MODKEY = require "user.constants".MODKEY
+local MODKEY = require("user.utils").custom "modkey"
 
 -- ## Key bindings
 
@@ -86,7 +86,7 @@ return {
    },
    {
       rule = { class = "Liberwolf" },
-      properties = { tag = Tag.BROWSER },
+      properties = { tag = TagIcons.BROWSER },
    },
    {
       rule = { instance = "floating-alacritty" },
@@ -111,6 +111,6 @@ return {
             "thunderbird",
          },
       },
-      properties = { tag = Tag.CHAT },
+      properties = { tag = TagIcons.CHAT },
    },
 }

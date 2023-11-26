@@ -6,7 +6,7 @@ local MouseButton = {
    SCROLL_DOWN = 5,
 }
 
-local Tag = {
+local TagIcons = {
    TERMINAL = " ",
    BROWSER = " ",
    DOCUMENTS = " ",
@@ -20,5 +20,5 @@ local Tag = {
 
 return {
    MouseButton = MouseButton,
-   Tag = Tag,
+   TagIcons = TagIcons,
 }

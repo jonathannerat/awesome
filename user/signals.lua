@@ -4,6 +4,12 @@ local client = client
 
 local placement = require "awful.placement"
 local beautiful = require "beautiful"
+local surface = require "gears.surface"
+local cairo = require("lgi").cairo
+local get_icon_path = require("awful.util").geticonpath
+local custom = require("user.utils").custom
+
+local DEFAULT_ICON = "/usr/share/icons/Papirus/64x64/apps/xfce-unknown.svg"
 
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function(c)
@@ -14,6 +20,17 @@ client.connect_signal("manage", function(c)
    if awesome.startup and not c.size_hints.user_position and not c.size_hints.program_position then
       -- Prevent clients from being unreachable after screen count changes.
       placement.no_offscreen(c)
+   end
+
+   if c and c.valid and not c.icon then
+      local fallback_icon = get_icon_path(c.class, { "svg", "png" }, custom "icon_dirs") or DEFAULT_ICON
+      local s = surface(fallback_icon)
+      local img = cairo.ImageSurface.create(cairo.Format.ARGB32, s:get_width(), s:get_height())
+      local cr = cairo.Context(img)
+
+      cr:set_source_surface(s, 0, 0)
+      cr:paint()
+      c.icon = img._native
    end
 end)
 
