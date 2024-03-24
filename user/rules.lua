@@ -1,4 +1,3 @@
-local client = require "awful.client"
 local mouse = require "awful.mouse"
 local beautiful = require "beautiful"
 local client_mappings = require("user.mappings").client
@@ -13,7 +12,7 @@ local enums = require "user.enums"
 local TagIcons = enums.TagIcons
 local MouseButton = enums.MouseButton
 
-local MODKEY = require("user.utils").custom "modkey"
+local MODKEY = require("user.utils").getopt "modkey"
 
 -- ## Key bindings
 
@@ -38,7 +37,7 @@ return {
       properties = {
          border_width = beautiful.border_width,
          border_color = beautiful.border_normal,
-         focus = client.focus.filter,
+         -- focus = client.focus.filter,
          raise = true,
          keys = client_mappings,
          buttons = client_buttons,

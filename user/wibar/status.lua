@@ -1,7 +1,6 @@
 local wibox = require "wibox"
 local lain_widget = require "lain.widget"
 local cycleclock = require "user.widget.cycleclock"
-local custom = require("user.utils").custom
 
 return { -- Status with separator
    widget = wibox.container.margin,

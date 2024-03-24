@@ -1,5 +1,6 @@
-local awesome = awesome
-local client = client
+-- Suppress undefined global warnings
+---@diagnostic disable-next-line: undefined-global
+local awesome, client = awesome, client
 
 local awful_client = require "awful.client"
 local awful_key = require "awful.key"
@@ -10,7 +11,7 @@ local screen = require "awful.screen"
 local join = require("gears.table").join
 local tags = require "awful.tag"
 
-local MODKEY = require("user.utils").custom("modkey")
+local MODKEY = require("user.utils").getopt "modkey"
 
 local function map(mod, key, fn)
    if not fn then
@@ -30,9 +31,9 @@ local quaketerm = lain.quake {
    app = "alacritty",
    name = "QuakeAlacritty",
    argname = "-t QuakeAlacritty",
-   extra = "--class QuakeAlacritty -e tmux new -A -s quake",
+   extra = "--class QuakeAlacritty -o font.size=8 -e tmux new -A -s quake",
    followtag = true,
-   height = 0.6,
+   height = 0.65,
    width = 0.6,
    vert = "center",
    horiz = "center",
@@ -147,11 +148,6 @@ local global_keys = join(
 
    map({ MODKEY, "Control" }, "m", function()
       quakemutt:toggle()
-   end),
-
-   -- Prompt
-   map(MODKEY, "p", function()
-      screen.focused().my_widgets.prompt:run()
    end),
 
    map(MODKEY, "b", function()

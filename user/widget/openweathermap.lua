@@ -1,8 +1,7 @@
 local geoclue = require "user.utils.geoclue"
-local custom = require("user.utils").custom
 local lain_widget = require "lain.widget"
 
-local api_key = custom "OPENWEATHERMAP_API"
+local api_key = require("user.utils").getopt "OPENWEATHERMAP_API"
 local location = geoclue.where_am_i()
 
 return lain_widget.weather {

@@ -1,13 +1,13 @@
 -- Suppress undefined global
-local awesome = awesome
-local client = client
+---@diagnostic disable-next-line: undefined-global
+local awesome, client = awesome, client
 
 local placement = require "awful.placement"
 local beautiful = require "beautiful"
 local surface = require "gears.surface"
 local cairo = require("lgi").cairo
-local get_icon_path = require("awful.util").geticonpath
-local custom = require("user.utils").custom
+local geticonpath = require("awful.util").geticonpath
+local getopt = require("user.utils").getopt
 
 local DEFAULT_ICON = "/usr/share/icons/Papirus/64x64/apps/xfce-unknown.svg"
 
@@ -23,7 +23,7 @@ client.connect_signal("manage", function(c)
    end
 
    if c and c.valid and not c.icon then
-      local fallback_icon = get_icon_path(c.class, { "svg", "png" }, custom "icon_dirs") or DEFAULT_ICON
+      local fallback_icon = geticonpath(c.class or c.instance or "", { "svg", "png" }, getopt "icon.path") or DEFAULT_ICON
       local s = surface(fallback_icon)
       local img = cairo.ImageSurface.create(cairo.Format.ARGB32, s:get_width(), s:get_height())
       local cr = cairo.Context(img)
