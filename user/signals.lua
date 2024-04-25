@@ -1,13 +1,13 @@
 -- Suppress undefined global
 ---@diagnostic disable-next-line: undefined-global
-local awesome, client = awesome, client
+local awesome, client, screen = awesome, client, screen
 
 local placement = require "awful.placement"
 local beautiful = require "beautiful"
 local surface = require "gears.surface"
 local cairo = require("lgi").cairo
 local geticonpath = require("awful.util").geticonpath
-local getopt = require("user.utils").getopt
+local option = require("user.options")
 
 local DEFAULT_ICON = "/usr/share/icons/Papirus/64x64/apps/xfce-unknown.svg"
 
@@ -23,7 +23,7 @@ client.connect_signal("manage", function(c)
    end
 
    if c and c.valid and not c.icon then
-      local fallback_icon = geticonpath(c.class or c.instance or "", { "svg", "png" }, getopt "icon.path") or DEFAULT_ICON
+      local fallback_icon = geticonpath(c.class or c.instance or "", { "svg", "png" }, option "icon.path") or DEFAULT_ICON
       local s = surface(fallback_icon)
       local img = cairo.ImageSurface.create(cairo.Format.ARGB32, s:get_width(), s:get_height())
       local cr = cairo.Context(img)
@@ -39,17 +39,17 @@ client.connect_signal("mouse::enter", function(c)
    c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
-local last_systray_screen = nil
+-- local last_systray_screen = nil
 client.connect_signal("focus", function(c)
    c.border_color = beautiful.border_focus
 
    -- move systray to focused client's screen (if it hasn't changed)
-   if last_systray_screen ~= c.screen then
-      local systray = c.screen.my_widgets.systray
-      systray:set_screen(c.screen)
-      systray:emit_signal "widget::redraw_needed"
-      last_systray_screen = c.screen
-   end
+   -- if last_systray_screen ~= c.screen then
+   --    local systray = c.screen.my_widgets.systray
+   --    systray:set_screen(c.screen)
+   --    systray:emit_signal "widget::redraw_needed"
+   --    last_systray_screen = c.screen
+   -- end
 end)
 
 client.connect_signal("unfocus", function(c)

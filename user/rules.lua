@@ -1,20 +1,17 @@
+local button = require "awful.button"
+local client = require "awful.client"
 local mouse = require "awful.mouse"
-local beautiful = require "beautiful"
-local client_mappings = require("user.mappings").client
 local placement = require "awful.placement"
 local screen = require "awful.screen"
-
-local dpi = require("beautiful.xresources").apply_dpi
+local beautiful = require "beautiful"
 local join = require("gears.table").join
-local button = require "awful.button"
 
-local enums = require "user.enums"
-local TagIcons = enums.TagIcons
-local MouseButton = enums.MouseButton
+local MouseButton = require("user.constants").MouseButton
+local client_mappings = require("user.mappings").client
+local option = require "user.options"
 
-local MODKEY = require("user.utils").getopt "modkey"
-
--- ## Key bindings
+local MODKEY = option "modkey"
+local myrules = option "rules"
 
 local client_buttons = join(
    button({}, MouseButton.LEFT, function(c)
@@ -30,86 +27,46 @@ local client_buttons = join(
    end)
 )
 
-return {
+local rules = {
    -- All clients will match this rule.
    {
       rule = {},
       properties = {
          border_width = beautiful.border_width,
          border_color = beautiful.border_normal,
-         -- focus = client.focus.filter,
-         raise = true,
+         focus = client.focus.filter,
          keys = client_mappings,
          buttons = client_buttons,
          screen = screen.preferred,
          placement = placement.no_overlap + placement.no_offscreen,
       },
    },
-
-   -- Floating clients.
-   {
-      rule_any = {
-         class = {
-            "Arandr",
-            "Sxiv",
-            "Pavucontrol",
-            "ssh-askpass",
-            "Connman-gtk",
-            "Blueman-manager",
-            "Qalculate-gtk",
-         },
-
-         -- Note that the name property shown in xprop might be set slightly after creation of the client
-         -- and the name shown there might not match defined rules here.
-         name = {
-            "Event Tester", -- xev.
-         },
-         role = {
-            "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
-         },
-      },
-      properties = { floating = true, border_width = dpi(1), placement = placement.centered },
-   },
-
-   {
-      rule = {
-         class = "albert",
-         instance = "albert",
-         name = "Albert",
-      },
-      except = { name = "Settings" },
-      properties = {
-         border_width = 0,
-         skip_taskbar = true,
-      },
-   },
-   {
-      rule = { class = "Liberwolf" },
-      properties = { tag = TagIcons.BROWSER },
-   },
-   {
-      rule = { instance = "floating-alacritty" },
-      properties = {
-         floating = true,
-         placement = placement.centered,
-      },
-   },
-   {
-      rule = { name = "zoom" },
-      properties = {
-         floating = true,
-         placement = placement.top + placement.right,
-      },
-   },
-   {
-      rule_any = {
-         class = {
-            "discord",
-            "KotatogramDesktop",
-            "Mailspring",
-            "thunderbird",
-         },
-      },
-      properties = { tag = TagIcons.CHAT },
-   },
 }
+
+if myrules.floating_clients then
+   rules[#rules + 1] = {
+      rule_any = myrules.floating_clients,
+      properties = {
+         floating = true,
+         ontop = true,
+         placement = placement.centered + placement.no_overlap,
+      },
+   }
+end
+
+if myrules.clients_by_tags then
+   for t, r in pairs(myrules.clients_by_tags) do
+      rules[#rules + 1] = {
+         rule_any = r,
+         properties = { tag = t },
+      }
+   end
+end
+
+if myrules.extras then
+   for _, r in ipairs(myrules.extras) do
+      rules[#rules + 1] = r
+   end
+end
+
+return rules

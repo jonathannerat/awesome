@@ -1,56 +1,47 @@
 -- vi: fdm=marker
 -- Suppress undefined global warnings
 ---@diagnostic disable-next-line: undefined-global
-local awesome, root = awesome, root
+local awesome, root, screen = awesome, root, screen
 
+local luarocks_dir = os.getenv "XDG_DATA_HOME" .. "/luarocks/share/lua/" .. _VERSION:sub(-3)
+package.path = package.path .. ";" .. luarocks_dir .. "/?.lua"
+package.path = package.path .. ";" .. luarocks_dir .. "/?/init.lua"
 pcall(require, "luarocks.loader")
 
-local fs = require "gears.filesystem"
-local spawn = require "awful.spawn"
 local layout = require "awful.layout"
 local rules = require "awful.rules"
+local ascreen = require "awful.screen"
+local spawn = require "awful.spawn"
 local beautiful = require "beautiful"
-local screens = require "awful.screen"
+local fs = require "gears.filesystem"
+local wall = require "gears.wallpaper"
+local option = require "user.options"
 
-local utils = require "user.utils"
-local getopt = utils.getopt
-local notify_error = utils.notify_error
+-- Functions {{{
+--- Show critical notification
+---@param title string
+---@param text string
+local function notify_error(title, text)
+   local naughty = require "naughty"
 
-local theme_paths = {
-   fs.get_configuration_dir() .. "/user/themes/%s.lua", -- single file theme
-   fs.get_configuration_dir() .. "/user/themes/%s/theme.lua", -- folder theme
-   fs.get_themes_dir() .. "%s/theme.lua", -- system theme
-}
+   naughty.notify {
+      preset = naughty.config.presets.critical,
+      title = title,
+      text = text,
+   }
+end
 
---- Initialize beautiful's theme
----@param theme_name string Name of the theme file inside `<config>/user/themes` folder
-local function init_theme(theme_name) -- {{{
-   local theme_path
-
-   for _, p in ipairs(theme_paths) do
-      theme_path = p:format(theme_name)
-      if fs.file_readable(theme_path) then
-         break
+local function set_wallpaper(s)
+   if beautiful.wallpaper then
+      local wallpaper = beautiful.wallpaper
+      -- If wallpaper is a function, call it with the screen
+      if type(wallpaper) == "function" then
+         wallpaper = wallpaper(s)
       end
-      theme_path = nil
+      wall.maximized(wallpaper, s, true)
    end
-
-   if theme_path then
-      beautiful.init(theme_path)
-   else
-      notify_error("Error loading theme", "Couldn't find file for theme: " .. theme_name)
-   end
-end -- }}}
-
--- ***********
--- * STARTUP *
--- ***********
-
--- Ensures there's always a client focused
-require "awful.autofocus"
-
--- Enables Usage of awesome-client
-require "awful.remote"
+end
+-- }}}
 
 -- Error handling {{{
 -- Before startup
@@ -70,6 +61,12 @@ awesome.connect_signal("debug::error", function(err)
    in_error = false
 end)
 -- }}}
+
+-- Ensures there's always a client focused
+require "awful.autofocus"
+
+-- Enables Usage of awesome-client
+require "awful.remote"
 
 -- Autostart {{{
 spawn "dbus-update-activation-environment DISPLAY XAUTHORITY WAYLAND_DISPLAY"
@@ -91,7 +88,27 @@ spawn.with_shell [[
 ]]
 -- }}}
 
-init_theme(getopt "theme")
+--- Initialize beautiful's theme -- {{{
+local theme_found = false
+local theme_name = option "theme"
+local THEME_PATH = {
+   fs.get_configuration_dir() .. "/user/themes/%s.lua", -- single file theme
+   fs.get_configuration_dir() .. "/user/themes/%s/theme.lua", -- folder theme
+   fs.get_themes_dir() .. "%s/theme.lua", -- system theme
+}
+
+for _, p in ipairs(THEME_PATH) do
+   local theme = p:format(theme_name)
+   if beautiful.init(theme) then
+      theme_found = true
+      break
+   end
+end
+
+if not theme_found then
+   notify_error("Error loading theme", "Couldn't find file for theme: " .. theme_name)
+end
+-- }}}
 
 layout.layouts = {
    layout.suit.tile,
@@ -99,7 +116,24 @@ layout.layouts = {
    layout.suit.max,
 }
 
-screens.connect_for_each_screen(require "user.wibar")
+-- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
+screen.connect_signal("property::geometry", set_wallpaper)
+
+local Wibar = require "user.wibar"
+local padding = (beautiful.useless_gap or 0) * 2
+ascreen.connect_for_each_screen(function(s)
+   set_wallpaper(s)
+
+   local w = Wibar.new {
+      padding = {
+         left = padding,
+         top = padding,
+         right = padding,
+      },
+   }
+
+   w:setup(s)
+end)
 
 -- Setup mappings
 root.keys(require("user.mappings").global)

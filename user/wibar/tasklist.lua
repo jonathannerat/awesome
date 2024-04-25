@@ -4,62 +4,71 @@ local client = client
 
 local button = require "awful.button"
 local tasklist = require "awful.widget.tasklist"
-local clienticon = require "awful.widget.clienticon"
-local table_utils = require "gears.table"
-local layout = require "wibox.layout"
-local widget = require "wibox.widget"
-local container = require "wibox.container"
+local wibox = require "wibox"
 
-local MouseButton = require("user.enums").MouseButton
+local tasklist_buttons = button({}, 1, function(c)
+   if c == client.focus then
+      c.minimized = true
+   else
+      c:emit_signal("request::activate", "tasklist", { raise = true })
+   end
+end)
 
 return function(s)
-   return tasklist {
-      screen = s,
-      filter = tasklist.filter.currenttags,
-      buttons = table_utils.join(
-         button({}, MouseButton.LEFT, function(c)
-            if c == client.focus then
-               c.minimized = true
-            else
-               c:emit_signal("request::activate", "tasklist", { raise = true })
-            end
-         end),
-         button({}, MouseButton.RIGHT, function()
-            require("awful.menu").client_list { theme = { width = 250 } }
-         end)
-      ),
-      layout = {
-         layout = layout.fixed.horizontal,
-      },
-      widget_template = {
-         layout = layout.fixed.vertical,
-         spacing = 3,
-         create_callback = function(self, c)
-            self:get_children_by_id("clienticon")[1].client = c
-         end,
+   return {
+      layout = wibox.layout.align.horizontal,
 
-         {
-            widget = container.margin,
-            left = 5,
-            right = 5,
-
+      tasklist {
+         screen = s,
+         filter = tasklist.filter.currenttags,
+         buttons = tasklist_buttons,
+         layout = {
+            layout = wibox.layout.fixed.horizontal,
+            spacing = 5,
+         },
+         widget_template = {
+            layout = wibox.layout.align.vertical,
 
             {
-               widget = container.background,
-               id = "background_role",
-               forced_height = 3,
+               widget = wibox.container.margin,
+               top = 3,
+               {
+                  wibox.widget.base.make_widget(),
+                  forced_height = 2,
+                  id = "background_role",
+                  widget = wibox.container.background,
+               },
+            },
+            {
+               widget = wibox.container.margin,
+               top = 2,
+               bottom = 2,
+               {
+                  widget = wibox.container.place,
+                  halign = "center",
 
-               widget.base.make_widget(),
+                  {
+                     id = "icon_role",
+                     widget = wibox.widget.imagebox,
+                  },
+               },
+            },
+            nil,
+         },
+      },
+      {
+         widget = wibox.container.margin,
+         left = 10,
+
+         tasklist {
+            screen = s,
+            filter = tasklist.filter.focused,
+            widget_template = {
+               id = "text_role",
+               widget = wibox.widget.textbox,
             },
          },
-         {
-            widget = container.margin,
-            left = 2,
-            {
-               id = "clienticon",
-               widget = clienticon,
-            },
-         }
       },
+      nil,
    }
 end

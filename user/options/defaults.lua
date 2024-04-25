@@ -1,3 +1,5 @@
+local dpi = require("beautiful.xresources").apply_dpi
+
 ---@type Options
 return {
    theme = "default",
@@ -13,24 +15,21 @@ return {
    icon = {
       theme = "default",
       path = {
-           "/usr/share/pixmaps/",
-           "/usr/share/hicolor/",
+         "/usr/share/pixmaps/",
+         "/usr/share/hicolor/",
       },
    },
 
    wibar = {
       height = 24,
       position = "top",
-      useless_gap = 0,
    },
 
-   tag_order = {
-      "TERMINAL",
-      "BROWSER",
-      "MUSIC",
-      "CHAT",
-      "GAMES",
+   ui = {
+      useless_gap = dpi(2),
    },
+
+   rules = {},
 
    modkey = "Mod1",
 }

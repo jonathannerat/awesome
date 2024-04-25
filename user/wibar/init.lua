@@ -1,148 +1,76 @@
+local TRANSPARENT = "#00000000"
 local beautiful = require "beautiful"
-local dpi = require("beautiful.xresources").apply_dpi
-local layouts = require("awful.layout").layouts
-local rounded_rect = require("gears.shape").rounded_rect
-local tags = require "awful.tag"
-local tmap = require("gears.table").map
 local wibar = require "awful.wibar"
 local wibox = require "wibox"
-local widget = require "awful.widget"
 
-local TagIcons = require("user.enums").TagIcons
-local getopt = require("user.utils").getopt
-local taglist = require "user.wibar.taglist"
-local tasklist = require "user.wibar.tasklist"
-local status = require "user.wibar.status"
+local mytaglist = require "user.wibar.taglist"
+local mytasklist = require "user.wibar.tasklist"
+local mystatus = require "user.wibar.status"
+local option = require "user.options"
+local rounded_corners = require("user.utils.widget").rounded_corners
 
-local layout = wibox.layout
-local systray = wibox.widget.systray()
-local ordered_tags = tmap(function(k)
-   return TagIcons[k]
-end, getopt "tag_order")
+local Wibar = {
+   padding = 0,
+}
+local mt = { __index = Wibar }
 
-local function get_widgets_for(screen)
-   return {
-      taglist = taglist(screen),
-      tasklist = tasklist(screen),
-      status = status,
-      systray = systray,
-      layoutbox = widget.layoutbox(screen),
-   }
+function Wibar.new(o)
+   o = o or {}
+   setmetatable(o, mt)
+   return o
 end
 
---- Place widgets[i+1] inside widgets[i] as a child
----@param widgets table[]
-local function compose(widgets)
-   local top
-
-   for _, w in ipairs(widgets) do
-      if top then
-         top[1] = w
-      end
-
-      top = w
-   end
-
-   return widgets[1]
-end
-
-local function hfixed(spacing, ...)
-   return {
-      spacing = spacing,
-      layout = layout.fixed.horizontal,
-      ...,
-   }
-end
-
-local function background(bg, shape, opts)
-   opts = opts or {}
-   opts.bg = bg or "#000000"
-   opts.shape = shape
-   opts.widget = wibox.container.background
-
-   return opts
-end
-
---- Create margin container
----@param a number all margins or top margin if b is nil
----@param b number? right margin or left/right if d is nil
----@param c number? bottom margin
----@param d number? right margin
----@return table
-local function margin(a, b, c, d)
-   local opts
-
-   if not (b or c or d) then
-      opts = {
-         margins = a,
-      }
-   else
-      if not (c or d) then
-         c = a
-         d = b
-      elseif not d then
-         d = b
-      end
-      opts = {
-         top = a,
-         right = b,
-         bottom = c,
-         left = d,
-      }
-   end
-
-   opts.widget = wibox.container.margin
-
-   return opts
-end
-
-local transparent_bg = "#00000000"
-local wibar_gap = dpi(4)
-
-return function(screen)
-   tags(ordered_tags, screen, layouts[1])
-
-   local screen_wibar = wibar.new {
-      screen = screen,
+function Wibar:setup(s)
+   self.wibar = wibar {
+      screen = s,
       widget = wibox.container.background,
-      bg = transparent_bg,
+      bg = TRANSPARENT,
+      position = option "wibar.position",
+      height = option "wibar.height",
    }
 
-   local widgets = get_widgets_for(screen)
+   local bar = {
+      layout = wibox.layout.align.horizontal,
 
-   screen_wibar:setup {
-      layout = layout.align.horizontal,
+      mytaglist(s),
+      {
+         widget = wibox.container.margin,
+         left = 10,
+         right = 10,
 
-      compose { -- Left widgets
-         margin(wibar_gap, wibar_gap, 0),
-         background(beautiful.bg_solid, rounded_rect),
-         widgets.taglist,
+         mytasklist(s),
       },
+      {
+         widget = wibox.container.margin,
+         right = 10,
 
-      compose { -- Middle widgets
-         margin(wibar_gap, wibar_gap, 0),
-         background(beautiful.bg_solid, rounded_rect),
-         compose {
-            margin(0, 0, 0, dpi(5)),
-            widgets.tasklist,
-         }
-      },
-
-      compose { -- Right widgets
-         margin(wibar_gap, wibar_gap, 0),
-         background(beautiful.bg_solid, rounded_rect),
-         hfixed(
-            10,
-            widgets.status,
-            widgets.systray,
-            compose {
-               margin(0, dpi(5), 0, 0),
-               widgets.layoutbox,
-            }
-         ),
+         mystatus,
       },
    }
 
-   widgets.wibar = screen_wibar
-   screen.my_widgets = widgets
+   local bg = {
+      widget = wibox.container.background,
+      bg = beautiful.bg_normal,
+      shape = rounded_corners(5),
+      shape_border_width = 1,
+      shape_border_color = beautiful.border_normal,
+
+      bar,
+   }
+
+   local gaps = { widget = wibox.container.margin, bg }
+
+   if type(self.padding) == "table" then
+      for k, v in pairs(self.padding) do
+         gaps[k] = v
+      end
+   else
+      gaps.margins = self.padding
+   end
+
+   self.wibar:setup(gaps)
+
+   s.wibar = self.wibar
 end
+
+return Wibar

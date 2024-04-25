@@ -1,17 +1,17 @@
 -- Suppress undefined global warnings
 ---@diagnostic disable-next-line: undefined-global
-local awesome, client = awesome, client
+local awesome, client, mouse = awesome, client, mouse
 
-local awful_client = require "awful.client"
-local awful_key = require "awful.key"
+local awful = require "awful"
+local beautiful = require "beautiful"
+local gtable = require "gears.table"
 local lain = require "lain.util"
-local layout = require "awful.layout"
 local naughty = require "naughty"
-local screen = require "awful.screen"
-local join = require("gears.table").join
-local tags = require "awful.tag"
+local wibox = require "wibox"
 
-local MODKEY = require("user.utils").getopt "modkey"
+local rounded_corners = require("user.utils.widget").rounded_corners
+
+local MODKEY = require "user.options" "modkey"
 
 local function map(mod, key, fn)
    if not fn then
@@ -24,7 +24,7 @@ local function map(mod, key, fn)
       mod = { mod }
    end
 
-   return awful_key(mod, key, fn)
+   return awful.key(mod, key, fn)
 end
 
 local quaketerm = lain.quake {
@@ -63,37 +63,121 @@ local quakemutt = lain.quake {
    horiz = "center",
 }
 
-local global_keys = join(
+local shell_prompt = awful.widget.prompt()
+
+local w = wibox {
+   ontop = true,
+   height = 34,
+   width = 200,
+   bg = beautiful.bg_normal,
+   shape = rounded_corners(5),
+   shape_border_color = "#ff0088",
+}
+
+w:setup {
+   widget = wibox.container.margin,
+   margins = 5,
+
+   shell_prompt,
+}
+
+local mylayoutlist = awful.widget.layoutlist {
+   base_layout = wibox.widget {
+      spacing = 5,
+      forced_num_cols = 3,
+      layout = wibox.layout.grid.vertical,
+   },
+   widget_template = {
+      {
+         {
+            id = "icon_role",
+            forced_height = 30,
+            forced_width = 30,
+            widget = wibox.widget.imagebox,
+         },
+         margins = 4,
+         widget = wibox.container.margin,
+      },
+      id = "background_role",
+      forced_width = 32,
+      forced_height = 32,
+      shape = rounded_corners(5),
+      widget = wibox.container.background,
+   },
+}
+local layout_popup = awful.popup {
+   widget = wibox.widget {
+      mylayoutlist,
+      margins = 4,
+      widget = wibox.container.margin,
+   },
+   border_color = beautiful.border_color,
+   border_width = beautiful.border_width,
+   placement = awful.placement.centered,
+   ontop = true,
+   visible = false,
+   shape = rounded_corners(10),
+}
+
+awful.keygrabber {
+   start_callback = function()
+      layout_popup.visible = true
+   end,
+   stop_callback = function()
+      layout_popup.visible = false
+   end,
+   export_keybindings = true,
+   release_event = "release",
+   stop_key = { "Escape", "Super_L", "Super_R" },
+   keybindings = {
+      {
+         { MODKEY },
+         "Prior",
+         function()
+            awful.layout.inc(-1)
+         end,
+      },
+      {
+         { MODKEY },
+         "Next",
+         function()
+            awful.layout.inc(1)
+         end,
+      },
+   },
+}
+
+local global_keys = gtable.join(
    map(MODKEY, "Left", function()
       lain.tag_view_nonempty(-1)
    end),
    map(MODKEY, "Right", function()
       lain.tag_view_nonempty(1)
    end),
-   map(MODKEY, "Tab", tags.history.restore),
+   map(MODKEY, "Tab", awful.tag.history.restore),
 
    map(MODKEY, "j", function()
-      awful_client.focus.byidx(1)
+      awful.client.focus.byidx(1)
    end),
    map(MODKEY, "k", function()
-      awful_client.focus.byidx(-1)
+      awful.client.focus.byidx(-1)
    end),
    -- Layout manipulation
    map({ MODKEY, "Shift" }, "j", function()
-      awful_client.swap.byidx(1)
+      awful.client.swap.byidx(1)
    end),
    map({ MODKEY, "Shift" }, "k", function()
-      awful_client.swap.byidx(-1)
+      awful.client.swap.byidx(-1)
    end),
    map(MODKEY, ",", function()
-      screen.focus_relative(1)
+      awful.screen.focus_relative(1)
    end),
    map(MODKEY, ".", function()
-      screen.focus_relative(-1)
+      awful.screen.focus_relative(-1)
    end),
-   map(MODKEY, "u", awful_client.urgent.jumpto),
+   map(MODKEY, "u", awful.client.urgent.jumpto),
    map(MODKEY, "grave", function()
-      awful_client.focus.history.previous()
+      awful.client.focus.history.previous()
       if client.focus then
          client.focus:raise()
       end
@@ -106,32 +190,26 @@ local global_keys = join(
    map({ MODKEY, "Shift" }, "q", awesome.quit),
 
    map(MODKEY, "l", function()
-      tags.incmwfact(0.05)
+      awful.tag.incmwfact(0.05)
    end),
    map(MODKEY, "h", function()
-      tags.incmwfact(-0.05)
+      awful.tag.incmwfact(-0.05)
    end),
    map({ MODKEY, "Shift" }, "h", function()
-      tags.incnmaster(1, nil, true)
+      awful.tag.incnmaster(1, nil, true)
    end),
    map({ MODKEY, "Shift" }, "l", function()
-      tags.incnmaster(-1, nil, true)
+      awful.tag.incnmaster(-1, nil, true)
    end),
    map({ MODKEY, "Control" }, "h", function()
-      tags.incncol(1, nil, true)
+      awful.tag.incncol(1, nil, true)
    end),
    map({ MODKEY, "Control" }, "l", function()
-      tags.incncol(-1, nil, true)
-   end),
-   map({ MODKEY, "Control" }, "k", function()
-      layout.inc(1)
-   end),
-   map({ MODKEY, "Control" }, "j", function()
-      layout.inc(-1)
+      awful.tag.incncol(-1, nil, true)
    end),
 
    map({ MODKEY, "Control" }, "n", function()
-      local c = awful_client.restore()
+      local c = awful.client.restore()
       -- Focus restored client
       if c then
          c:emit_signal("request::activate", "key.unminimize", { raise = true })
@@ -150,8 +228,25 @@ local global_keys = join(
       quakemutt:toggle()
    end),
 
+   map({ MODKEY }, "p", function()
+      w.visible = true
+      awful.placement.bottom_left(w, {
+         margins = { bottom = 4, left = 4 },
+         parent = mouse.screen,
+      })
+      awful.prompt.run {
+         prompt = "<b>Run</b>: ",
+         textbox = shell_prompt.widget,
+         completion_callback = awful.completion.shell,
+         exe_callback = awful.spawn,
+         done_callback = function()
+            w.visible = false
+         end,
+      }
+   end),
+
    map(MODKEY, "b", function()
-      local wibar = screen.focused().my_widgets.wibar
+      local wibar = awful.screen.focused().wibar
       wibar.visible = not wibar.visible
    end)
 )
@@ -160,11 +255,11 @@ local global_keys = join(
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
 for i = 1, 9 do
-   global_keys = join(
+   global_keys = gtable.join(
       global_keys,
       -- View tag only.
       map(MODKEY, "#" .. i + 9, function()
-         local focused = screen.focused()
+         local focused = awful.screen.focused()
          local tag = focused.tags[i]
          if tag then
             tag:view_only()
@@ -172,10 +267,10 @@ for i = 1, 9 do
       end),
       -- Toggle tag display.
       map({ MODKEY, "Control" }, "#" .. i + 9, function()
-         local focused = screen.focused()
+         local focused = awful.screen.focused()
          local tag = focused.tags[i]
          if tag then
-            tags.viewtoggle(tag)
+            awful.tag.viewtoggle(tag)
          end
       end),
       -- Move client to tag.
@@ -199,7 +294,7 @@ for i = 1, 9 do
    )
 end
 
-local client_keys = join(
+local client_keys = gtable.join(
    map(MODKEY, "f", function(c)
       c.fullscreen = not c.fullscreen
       c:raise()
@@ -207,12 +302,15 @@ local client_keys = join(
    map(MODKEY, "q", function(c)
       c:kill()
    end),
-   map({ MODKEY, "Shift" }, "f", awful_client.floating.toggle),
+   map({ MODKEY, "Shift" }, "f", awful.client.floating.toggle),
    map(MODKEY, "Return", function(c)
-      c:swap(awful_client.getmaster())
+      c:swap(awful.client.getmaster())
    end),
    map(MODKEY, "o", function(c)
       c:move_to_screen()
+   end),
+   map(MODKEY, "s", function(c)
+      c.sticky = not c.sticky
    end),
    map(MODKEY, "t", function(c)
       c.ontop = not c.ontop

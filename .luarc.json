@@ -9,7 +9,9 @@
         "/usr/share/awesome/lib/?.lua",
         "/usr/share/awesome/lib/?/init.lua",
         "/usr/share/lua/5.3/?.lua",
-        "/usr/share/lua/5.3/?/init.lua"
+        "/usr/share/lua/5.3/?/init.lua",
+        "/home/jt/.local/share/luarocks/share/lua/5.3/?.lua",
+        "/home/jt/.local/share/luarocks/share/lua/5.3/?/init.lua"
     ],
     "workspace.library": [
         "/usr/share/awesome/lib",
