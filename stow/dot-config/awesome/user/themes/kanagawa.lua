@@ -1,1 +1,0 @@
-../../../../../user/themes/kanagawa.lua

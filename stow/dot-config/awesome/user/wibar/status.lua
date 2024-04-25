@@ -1,1 +1,0 @@
-../../../../../user/wibar/status.lua
