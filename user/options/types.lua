@@ -32,6 +32,6 @@ local uiopts = {}
 ---@field icon IconOptions?
 ---@field notification NotificationOptions?
 ---@field wibar WibarOptions?
----@field tags TagsOptions?
+---@field tags TagsOptions
 ---@field ui UIOptions?
 local opts = {}

@@ -29,6 +29,8 @@ return {
       useless_gap = dpi(2),
    },
 
+   tags = {"1", "2", "3", "4", "5", "6", "7", "8", "9"},
+
    rules = {},
 
    modkey = "Mod1",
