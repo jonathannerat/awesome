@@ -2,6 +2,7 @@ local fixed = require "wibox.layout.fixed"
 local separator = require "wibox.widget.separator"
 local textclock = require "wibox.widget.textclock"
 
+local option = require "user.options"
 local openweathermap = require "user.widget.openweathermap"
 local battery = require "user.widget.battery"
 
@@ -11,7 +12,7 @@ return { -- Status with separator
    spacing_widget = separator,
 
    openweathermap { timeout = 10 * 60, initial_text = "󰥖  Loading…" },
-   battery(),
+   battery { battery = option "battery" },
    textclock " %b %d, %a",
    textclock(" %H:%M", 10),
 }

@@ -34,4 +34,6 @@ return {
    rules = {},
 
    modkey = "Mod1",
+
+   battery = "BAT0",
 }
