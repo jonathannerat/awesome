@@ -39,30 +39,6 @@ local quaketerm = lain.quake {
    horiz = "center",
 }
 
-local quakennn = lain.quake {
-   app = "alacritty",
-   name = "QuakeNNN",
-   argname = "-t QuakeNNN",
-   extra = "--class QuakeNNN -o font.size=10 -e n",
-   followtag = true,
-   height = 0.6,
-   width = 0.6,
-   vert = "center",
-   horiz = "center",
-}
-
-local quakemutt = lain.quake {
-   app = "alacritty",
-   name = "QuakeNeomutt",
-   argname = "-t QuakeNeomutt",
-   extra = "--class QuakeNeomutt -o font.size=8 -e neomutt",
-   followtag = true,
-   height = 0.8,
-   width = 0.6,
-   vert = "center",
-   horiz = "center",
-}
-
 local shell_prompt = awful.widget.prompt()
 
 local w = wibox {
@@ -216,19 +192,11 @@ local global_keys = gtable.join(
       end
    end),
 
-   map({ MODKEY, "Control" }, "Return", function()
+   map({ MODKEY }, "Return", function()
       quaketerm:toggle()
    end),
 
-   map({ MODKEY, "Control" }, "e", function()
-      quakennn:toggle()
-   end),
-
-   map({ MODKEY, "Control" }, "m", function()
-      quakemutt:toggle()
-   end),
-
-   map({ MODKEY }, "p", function()
+   map({ MODKEY }, "r", function()
       w.visible = true
       awful.placement.bottom_left(w, {
          margins = { bottom = 4, left = 4 },
@@ -303,7 +271,7 @@ local client_keys = gtable.join(
       c:kill()
    end),
    map({ MODKEY, "Shift" }, "f", awful.client.floating.toggle),
-   map(MODKEY, "Return", function(c)
+   map({ MODKEY, "Shift" }, "Return", function(c)
       c:swap(awful.client.getmaster())
    end),
    map(MODKEY, "o", function(c)
