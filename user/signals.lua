@@ -7,6 +7,7 @@ local beautiful = require "beautiful"
 local surface = require "gears.surface"
 local cairo = require("lgi").cairo
 local geticonpath = require("awful.util").geticonpath
+local wibox = require "wibox"
 local option = require("user.options")
 
 local DEFAULT_ICON = "/usr/share/icons/Papirus/64x64/apps/xfce-unknown.svg"
@@ -39,17 +40,17 @@ client.connect_signal("mouse::enter", function(c)
    c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
--- local last_systray_screen = nil
+local last_systray_screen = nil
+local global_systray = wibox.widget.systray()
 client.connect_signal("focus", function(c)
    c.border_color = beautiful.border_focus
 
    -- move systray to focused client's screen (if it hasn't changed)
-   -- if last_systray_screen ~= c.screen then
-   --    local systray = c.screen.my_widgets.systray
-   --    systray:set_screen(c.screen)
-   --    systray:emit_signal "widget::redraw_needed"
-   --    last_systray_screen = c.screen
-   -- end
+   if last_systray_screen ~= c.screen then
+      global_systray:set_screen(c.screen)
+      global_systray:emit_signal "widget::redraw_needed"
+      last_systray_screen = c.screen
+   end
 end)
 
 client.connect_signal("unfocus", function(c)
