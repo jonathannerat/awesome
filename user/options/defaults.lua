@@ -1,4 +1,5 @@
 local dpi = require("beautiful.xresources").apply_dpi
+local textclock = require("wibox.widget.textclock")
 
 ---@type Options
 return {
@@ -6,6 +7,10 @@ return {
       theme = "default",
       font = "monospace 10",
       useless_gap = dpi(2),
+      status = {
+         textclock("  %Y-%m-%d"),
+         textclock("  %H:%M:%S", 1),
+      },
    },
 
    notification = {
