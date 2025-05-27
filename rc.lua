@@ -90,7 +90,7 @@ spawn.with_shell [[
 
 --- Initialize beautiful's theme -- {{{
 local theme_found = false
-local theme_name = option "theme"
+local theme_name = option "ui.theme"
 local THEME_PATH = {
    fs.get_configuration_dir() .. "/user/themes/%s.lua", -- single file theme
    fs.get_configuration_dir() .. "/user/themes/%s/theme.lua", -- folder theme

@@ -8,7 +8,7 @@ local theme = {}
 
 local palette = require "user.palette.kanagawa"
 
-theme.font = option "font"
+theme.font = option "ui.font"
 
 theme.bg_normal = palette.sumiInk0
 theme.fg_normal = palette.fujiWhite
