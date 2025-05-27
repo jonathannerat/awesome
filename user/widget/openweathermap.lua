@@ -18,7 +18,7 @@ local Accuracy = {
    EXACT = 8,
 }
 
-local API_KEY = options "OPENWEATHERMAP_API_KEY"
+local API_KEY = options "env.OPENWEATHERMAP_API_KEY"
 local ERROR_TEXT = " Weather n/a"
 local ICONS = {
    ["11d"] = " ",
